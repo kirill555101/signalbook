@@ -1,0 +1,135 @@
+\documentclass[10pt]{book}
+\usepackage{bmstu-lab-book}
+\usepackage{forloop}
+\usepackage[subpreambles=false]{standalone}
+\usepackage[pages=some]{background}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{arrows,shapes,positioning,shadows,trees}
+\usepackage{titlepic}
+\usepackage{graphicx}
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+\usepackage{rotating}
+\usepackage[font=small]{caption}
+
+
+%%% Интервал между абзацами, дополняющий обычный интервал между строками
+\setlength{\parskip}{0mm}
+% Настройка для отображения ответов на контрольные вопросы
+\boolfalse{answers} 
+
+% Знаки TradeMark и Registered
+\usepackage{textcomp}
+\usepackage{xspace}
+\let\OldTextregistered\textregistered
+\renewcommand{\textregistered}{\OldTextregistered\xspace}%
+\let\OldTexttrademark\texttrademark
+\renewcommand{\texttrademark}{\OldTexttrademark\xspace}%
+
+% Для регистрации папок с конкретными лабами и определения их порядка в сборнике
+\usepackage{etoolbox} 
+\newcounter{cnt} 
+\newcommand\textlist{} 
+\newcommand\settext[2]{% 
+\csdef{text#1}{#2}} 
+\newcommand\addtext[1]{% 
+\stepcounter{cnt}% 
+\csdef{text\thecnt}{#1}} 
+\newcommand\gettext[1]{% 
+\csuse{text#1}} 
+\newcounter{colnum} \newcommand\maketabularrow[1]{% 
+\setcounter{colnum}{0}% 
+\whileboolexpr { test {\ifnumcomp{\value{colnum}}{<}{#1}} }% 
+{&\stepcounter{colnum}\thecolnum} } 
+
+% Параметры страниц
+\special{papersize=170mm,240mm}
+\textheight 170mm % 200-(12+25)*0.35146 = 186.99598
+\textwidth 120mm
+\headheight13.6pt % = 0.48 mm
+\oddsidemargin -10mm
+\evensidemargin -10mm
+\topmargin -20mm
+\usepackage{setspace}
+\singlespacing
+
+%%% Для формирования списка литературы BibLaTeX (соритировка по мере появления в тексте)
+\usepackage[backend=biber,bibencoding=utf8,sorting=none,maxcitenames=2,bibstyle=numeric,citestyle=numeric]{biblatex}
+\addbibresource{lib.bib} % список литературы
+
+\graphicspath{tikz}
+
+% Чтобы ушел заголовок содержания с верхнего колонтитула каждой страницы
+% Подробнее: https://www.overleaf.com/learn/latex/Headers_and_footers
+\pagestyle{myheadings}
+
+%\usepackage{setspace}\onehalfspacing
+%\AtBeginDocument{%
+%	\addtolength\abovedisplayskip{1\baselineskip}%
+%	\addtolength\belowdisplayskip{-0.1\baselineskip}%
+%	\addtolength\abovedisplayshortskip{-0.1\baselineskip}%
+%	\addtolength\belowdisplayshortskip{-0.1\baselineskip}%
+%}
+
+\usepackage{tocloft}
+\setlength{\cftpartindent}{0em}
+\setlength{\cftchapindent}{0em}
+\setlength{\cftsecindent}{0em}
+\setlength{\cftsubsecindent}{0em}
+\setlength{\cftsubsubsecindent}{0em}
+
+\fancyhf{} % clear all header and footers
+\renewcommand{\headrulewidth}{0pt} % remove the header rule
+\fancyfoot[LE,RO]{\thepage} % Left side on Even pages; Right side on Odd pages
+\pagestyle{fancy}
+
+\renewcommand{\chapter}[2]{}% убираем стандартный заголовок для библиографии
+
+%%% Объем данных на диске
+\newcommand{\filesize}{18,5}
+
+\begin{document}
+\renewcommand{\labelitemi}{--}
+\renewcommand\contentsname{}% убираем стандартный заголовок для оглавления
+
+% Чnобы не было разрывов после формул
+\setlength{\abovedisplayskip}{1.5pt}
+\setlength{\belowdisplayskip}{1.5pt}
+
+% Каждая папка с соответствующей лабой должна называться <<Lab-[label]>>, 
+% где \addtext{[label]} --- регистрация лабы в сборнике
+% Порядок лабораторных работ в сборнике:
+\addtext{ma} 	    % 1 - moving average
+\addtext{ssf}       % 2 - Synchronous signal filtering
+\addtext{fir}    	% 3 - Finite impulse response filtering
+\addtext{mf} 	    % 4 - Matched-filtering
+\addtext{goertzel} 	% 5 - Goertzel algorithm
+\addtext{fq} 	    % 6 - Frequency shifting
+\addtext{fmmod} 	% 7 - Phase-Code-Manipulated Signal Receiver
+\addtext{hht} 		% 8 - Hilbert–Huang transform
+
+\begin{center}%
+\section*{Оглавление}
+\end{center}%
+\tableofcontents
+\thispagestyle{fancy}
+
+% Цикл формирования лабораторных в сборнике
+\newcommand \labnumcount{3} % Номер последней лабы
+\newcounter{labnum} % Номер первой лабы
+\forloop{labnum}{3}{\not{\value{labnum} > \labnumcount}}{
+    \newpage
+	\input{Lab-\gettext{\arabic{labnum}}/title.tex}
+
+	\subsection*{Основные теоретические сведения}
+	\subimport{Lab-\gettext{\arabic{labnum}}/}{theory.tex}
+}
+
+\newpage
+\begin{center}%
+\section*{Список литературы}
+\end{center}%
+\addcontentsline{toc}{section}{\bibname}
+\printbibliography
+
+\end{document}
