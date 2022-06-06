@@ -121,9 +121,9 @@
 
 
 % Цикл формирования лабораторных в сборнике
-\newcommand \labnumcount{1} % Номер последней лабы
+\newcommand \labnumcount{3} % Номер последней лабы
 \newcounter{labnum} % Номер первой лабы
-\forloop{labnum}{1}{\not{\value{labnum} > \labnumcount}}{
+\forloop{labnum}{3}{\not{\value{labnum} > \labnumcount}}{
     \newpage
 	\input{Lab-\gettext{\arabic{labnum}}/title.tex}
 
